@@ -21,14 +21,13 @@ public class SaveTxtFile {
 
 
         StringBuffer sb1=new StringBuffer();
-        sb1.append("序号    词语          加入长度         TF-IDF          TF           IDF"+"\n");
+        sb1.append("序号    词语          加入长度"+"\n");
         out.write(sb1.toString().getBytes("utf-8"));
 
         int cnt_out=1;
         for (Word word : results) {
             StringBuffer sb=new StringBuffer();
-            sb.append(cnt_out+"  "+word.getName()+"  "+word.getTf_idf_length()+"  "+word.getTf_idf()+"  "+word.getTf()+"  "+word.getIdf()
-                    +"\n");
+            sb.append(cnt_out+"  "+word.getName()+"  "+word.getTf_idf_length()+"\n");
             out.write(sb.toString().getBytes("utf-8"));
             cnt_out++;
         }

@@ -92,7 +92,7 @@ public class DataQuery {
 
         //Usee
 //        System.out.println(column);
-        String sql = "SELECT "+column+" FROM "+DataBase.tableName+" WHERE topicID=273";
+        String sql = "SELECT "+column+" FROM "+DataBase.tableName+" WHERE topicID=295";
         PreparedStatement pstmt;
         try {
             pstmt = (PreparedStatement)conn.prepareStatement(sql);
@@ -128,7 +128,7 @@ public class DataQuery {
         Connection conn = getConnection();
 
         //Usee
-        String sql = "SELECT * FROM "+DataBase.tableName+" WHERE topicID=273 ORDER BY create_time";
+        String sql = "SELECT * FROM "+DataBase.tableName+" WHERE topicID=295 ORDER BY create_time";
         PreparedStatement pstmt;
         try {
             pstmt = (PreparedStatement)conn.prepareStatement(sql);

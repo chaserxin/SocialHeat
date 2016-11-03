@@ -30,7 +30,7 @@ public class DataStat {
 
         //整体分词
         List<String> fenciResults = run.run();
-        List<Word> topN_words = wordCount.count(fenciResults, 10);
+        List<Word> topN_words = wordCount.count(fenciResults, 150);
 
         List<Rate> rates = dq.queryByTime(10);
         System.out.println("\n准备进入Rate循环。。。。。。。。。");
@@ -44,8 +44,8 @@ public class DataStat {
         }
 
 
-        SaveTxtFile.writeForUsee("/home/sl/SocialHeat/1/" + DataBase.tableName + "_Rate.txt",rates);
-//        SaveTxtFile.write("/home/sl/SocialHeat/1/" + DataBase.tableName + ".txt", results);
+//        SaveTxtFile.writeForUsee("/home/sl/SocialHeat/1/" + DataBase.tableName + "_Rate.txt",rates);
+        SaveTxtFile.write("/home/sl/SocialHeat/1/jxyTop150.txt", topN_words);
 
     }
 
