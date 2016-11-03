@@ -17,9 +17,6 @@ public class main {
 
     public static void main(String args[]) throws IOException {
 
-        String tableName = "dfzx_weibo";
-        String columnName = "text";
-        String columnName2 = "rt_text";
 
         DataQuery query = new DataQuery();
 
@@ -28,7 +25,7 @@ public class main {
         WordAnalyzer2 analyzer = new WordAnalyzer2();
         List<String> result = analyzer.count(queryResult,1);
 
-//        SaveTxtFile.write("/home/sl/SocialHeat/1/"+tableName+".txt",result);
+//        SaveTxtFile.write("/home/sl/SocialHeat/1/jxy.txt",result);
     }
 
 }
