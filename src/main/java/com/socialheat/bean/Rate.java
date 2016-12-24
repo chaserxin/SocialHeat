@@ -1,16 +1,20 @@
 package com.socialheat.bean;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 /**
  * Created by sl on 16-10-31.
+ * 保存时间间隔内的热度的相关信息
  */
 public class Rate {
 
+	// 时间间隔内的热度
     private double rate;
+    // 时间间隔内的弹幕数
     private List<String> strings;
+    // 开始时间
     private long startTime;
+    // 结束时间
     private long endTime;
 
     public Rate(List<String> strings, long startTime, long endTime) {

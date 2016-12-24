@@ -1,52 +1,63 @@
 package com.socialheat.analysis;
 
-import com.socialheat.bean.DataBase;
-import com.socialheat.bean.Rate;
-import com.socialheat.bean.Word;
-import com.socialheat.jieba.WordCount;
-import com.socialheat.jieba.WordSplit;
-import com.socialheat.util.DataQuery;
-import com.socialheat.util.SaveTxtFile;
-
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by sl on 16-10-31.
- */
+import com.socialheat.bean.Rate;
+import com.socialheat.bean.Word;
+import com.socialheat.dao.DaoInterface;
+import com.socialheat.util.SaveFileUtil;
+import com.socialheat.wordsplit.WordSplit;
+
+
 public class DataStat {
 
-    public static void main(String args[]) throws IOException {
-        DataStat ds = new DataStat();
-        ds.analysis();
-    }
+	/**
+	 * 此类为项目分析起始类
+	 * @param dao 			需要分析的项目
+	 * @param wordSplit		分词方式
+	 * @param span			分析的时间间隔
+	 * @throws IOException
+	 */
+    public static void analysis(DaoInterface dao, WordSplit wordSplit, int topNum, int span) throws IOException {
+        TopNWord topNWord = new TopNWord();
+        EventPopularity eventPopularity = new EventPopularity();
+        
+        // 获取所有句子
+        List<String> SentenceList = dao.getSentenceList();
+        // 将所有句子整体分词
+        List<String> wordSplitResults = wordSplit.run(SentenceList);
+        // 获取 TopN 热词
+        List<Word> topNWordList = topNWord.getWordTopN(wordSplitResults, SentenceList, topNum);
 
-    public void analysis() throws IOException {
-
-        DataQuery dq = new DataQuery();
-        WordSplit run = new WordSplit();
-        WordCount wordCount = new WordCount();
-
-        //整体分词
-        List<String> fenciResults = run.run();
-        List<Word> topN_words = wordCount.count(fenciResults, 150);
-
-        List<Rate> rates = dq.queryByTime(10);
-        System.out.println("\n准备进入Rate循环。。。。。。。。。");
-
-        for(Rate rate : rates){
-
-            List<String> fenci_results = run.runByWords(rate.getStrings());
-            rate.setRate(wordCount.countForDataStat(topN_words,fenci_results,rate.getStrings()));
-
-            System.out.println(rate.getStartTime()+" -- "+rate.getEndTime()+"  : "+rate.getRate());
+        // 第一次计算 CPMI 先初始化
+		List<List<String>> splitSencenceList = wordSplit.splitSencence(SentenceList);
+		WordCPMI.initCPMI(topNWordList, splitSencenceList, 0);
+		
+        // 获取以 10 分钟为间隔的并且在每个 10 分钟内的所有弹幕的 List
+        List<Rate> rateList = dao.getSentenceListByTime(span);
+        
+        System.out.println("准备进入Rate循环...");
+        int span_ = topNum / 5;
+        for (int n=topNum; n>=topNum*6/10; n=n-span_) {
+        	System.out.println("++++++++++++++++++++++++++++++++++++");
+            System.out.println("选取前 " + n + " 个热词！");
+            
+        	 // 得到前 topNum 的热词加上 CPMI 的结果
+        	List<Word> tempList = topNWordList.subList(0, n);
+         	List<Word> topN_CPMI_WordList = WordCPMI.getCPMI(tempList);
+         	for(Rate rate : rateList){
+                List<String> wordSplit_results = wordSplit.run(rate.getStrings());
+                rate.setRate(eventPopularity.getRate_v2(topN_CPMI_WordList, wordSplit_results, rate.getStrings()));
+            }
+         	if (n == topNum) {
+         		SaveFileUtil.writeWord("E:/SocialHeatPaper/SocialHeat/result/" + dao.getName() + "_Top" + n + "_Word.txt", topN_CPMI_WordList);
+         	}
+         	SaveFileUtil.writeRate("E:/SocialHeatPaper/SocialHeat/result/" + dao.getName() + "_Top" + n + "_Rate.txt", rateList);
         }
-
-
-//        SaveTxtFile.writeForUsee("/home/sl/SocialHeat/1/" + DataBase.tableName + "_Rate.txt",rates);
-        SaveTxtFile.write("/home/sl/SocialHeat/1/jxyTop150.txt", topN_words);
-
+        System.out.println("++++++++++++++++++++++++++++++++++++");
+        System.out.println();
+       return ;
     }
 
 
