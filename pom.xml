@@ -42,6 +42,20 @@
             <artifactId>jieba-analysis</artifactId>
             <version>1.0.2</version>
         </dependency>
+        
+        <dependency> 
+	       <groupId>commons-logging</groupId>  
+           <artifactId>commons-logging</artifactId>  
+           <version>1.2</version>  
+        </dependency>
+        
+        <!-- mongodb 驱动 -->
+        <dependency>
+        	<groupId>org.mongodb</groupId>
+        	<artifactId>mongodb-driver</artifactId>
+       		<version>3.4.2</version>
+   	 	</dependency>
+    
     </dependencies>
 
 

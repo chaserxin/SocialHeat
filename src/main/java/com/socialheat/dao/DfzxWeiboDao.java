@@ -9,27 +9,24 @@ import java.util.List;
 
 import com.socialheat.wordsplit.WordSplit;
 
-public class USeeDao implements DaoInterface {
-	
+public class DfzxWeiboDao implements DaoInterface {
+
 	private DaoHandler daoHandler;
 	
-	public USeeDao(){
+	public DfzxWeiboDao() {
 		daoHandler = new DaoHandler();
 	}
-
-
-    /**
-     * 得到弹幕message
-     * @return
-     */
-    public List<String> getSentenceList(){
-        List<String> result = new ArrayList<String>();
+	
+	/**
+	 * 得到微博的评论
+	 */
+	public List<String> getSentenceList() {
+		List<String> result = new ArrayList<String>();
 
         // 获取数据库连接
         Connection conn = daoHandler.getConnection();
 
-        // USee
-        String sql = "SELECT messages FROM danmu WHERE topicID = '295'";
+        String sql = "SELECT text FROM dfzx_weibo ORDER BY create_time";
         PreparedStatement pstmt;
         try {
             pstmt = conn.prepareStatement(sql);
@@ -39,36 +36,33 @@ public class USeeDao implements DaoInterface {
                 result.add(rs.getString(1));
             }
 
-            System.out.println("读入了"+result.size()+"条数据（弹幕）");
+            System.out.println("读入了"+result.size()+"条数据（微博评论）");
             System.out.println("============================");
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
         	daoHandler.close(conn);
 		}
-
         return result;
-    }
-    
-    public String getName() {
-    	return "USee";
-    }
+	}
 
+	public String getName() {
+		return "DFZX_Weibo";
+	}
 
 	public List<String> getSentenceListByStream(int start) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-
 	public List<List<String>> getSplitSentenceList(WordSplit wordSplit) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-
 	public long getStartTime() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
 }

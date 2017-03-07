@@ -31,7 +31,12 @@ public class WordSplitIKAnalyzer implements WordSplit {
         return result;
     }
 
-	public List<List<String>> splitSencence(List<String> sentenceList) {
+	public List<List<String>> splitSencenceList(List<String> sentenceList) {
+		return null;
+	}
+
+	public List<String> splitSencence(String sentence) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 }

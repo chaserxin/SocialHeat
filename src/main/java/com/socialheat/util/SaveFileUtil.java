@@ -15,10 +15,13 @@ public class SaveFileUtil {
 
     public static void writeWord(String fileName , List<Word> results) throws IOException {
         File file=new File(fileName);
-        if(!file.exists())
-            file.createNewFile();
+        if(!file.exists()) {
+        	file.createNewFile();
+        } else {
+        	file.delete();
+        	file.createNewFile();
+        }
         FileOutputStream out=new FileOutputStream(file,true);
-
 
         StringBuffer sb1=new StringBuffer();
         sb1.append("序号    词语          加入长度"+"\n");
@@ -36,23 +39,46 @@ public class SaveFileUtil {
 
     public static void writeRate(String fileName , List<Rate> results) throws IOException {
         File file=new File(fileName);
-        if(!file.exists())
-            file.createNewFile();
+        if(!file.exists()) {
+        	file.createNewFile();
+        } else {
+        	file.delete();
+        	file.createNewFile();
+        }
         FileOutputStream out=new FileOutputStream(file,true);
-
 
         StringBuffer sb1=new StringBuffer();
         sb1.append("序号        开始时间      --      结束时间         Rate"+"\n");
         out.write(sb1.toString().getBytes("utf-8"));
 
+        StringBuffer time = new StringBuffer();
+        StringBuffer eventPopularity = new StringBuffer();
+        time.append("[");
+        eventPopularity.append("[");
+        
         int cnt_out=1;
         for (Rate rate : results) {
+        	if(cnt_out != 1) {
+        		time.append(",");
+        		eventPopularity.append(",");
+        	}
+        	time.append("'" + TimeUtil.timestamp2Date(rate.getStartTime()) + "-" + TimeUtil.timestamp2Date(rate.getEndTime()) + "'");
+            eventPopularity.append(rate.getRate());
+            
             StringBuffer sb = new StringBuffer();
             sb.append(cnt_out+"  "+TimeUtil.timestamp2Date(rate.getStartTime())+" -- "+TimeUtil.timestamp2Date(rate.getEndTime())+"  "+rate.getRate()+"\n");
             out.write(sb.toString().getBytes("utf-8"));
             cnt_out++;
         }
+        time.append("]");
+        eventPopularity.append("]");
+        System.out.println("=============================");
+        System.out.println("time: " + time.toString());
+        System.out.println("eventPopularity: " + eventPopularity.toString());
+        System.out.println("=============================");
         out.close();
+        
+        
     }
 
 

@@ -1,7 +1,9 @@
 package com.socialheat.bean;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * Created by sl on 16-10-24.
  * 词语对象
  * 保存词语相关的信息
  */
@@ -17,38 +19,24 @@ public class Word {
     // CPMI
     private double cpmi;
     
-    // 包含该热词的文档数 +1
-    private int times_sentence;
-    // 词语的长度
-    private int length;
     // TF 乘以 IDF 的结果
     private double tf_idf;
     // TF 乘以 IDF 乘以 Length 的最终结果
     private double tf_idf_length;
-    // TF 乘以 IDF 乘以 Length 乘以 CPMI 的最终结果
-    private double tf_idf_length_cpmi;
+    // 记录该热词的排名,从0开始
+    private int index;
     
-    public Word(String name, int times, int length) {
-        this.name = name;
-        this.times = times;
-        this.length = length;
-    }
-
+    // 包含该热词的文档编号 List
+    public List<Integer> sentenceList = new ArrayList<Integer>();
+    // 记录该热词存在的最后一个文档的index值
+    public int lastSentenceIndex = 0;
+    
     public Word(String name, int times) {
         this.name = name;
         this.times = times;
     }
 
     public Word(){
-
-    }
-
-    public int getLength() {
-        return length;
-    }
-
-    public void setLength(int length) {
-        this.length = length;
     }
 
     public double getTf_idf_length() {
@@ -101,28 +89,20 @@ public class Word {
         this.idf = idf;
     }
 
-    public int getTimes_sentence() {
-        return times_sentence;
-    }
-
-    public void setTimes_sentence(int times_sentence) {
-        this.times_sentence = times_sentence;
-    }
-
-	public double getTf_idf_length_cpmi() {
-		return tf_idf_length_cpmi;
-	}
-
-	public void setTf_idf_length_cpmi(double tf_idf_length_cpmi) {
-		this.tf_idf_length_cpmi = tf_idf_length_cpmi;
-	}
-
 	public double getCpmi() {
 		return cpmi;
 	}
 
 	public void setCpmi(double cpmi) {
 		this.cpmi = cpmi;
+	}
+
+	public int getIndex() {
+		return index;
+	}
+
+	public void setIndex(int index) {
+		this.index = index;
 	}
     
 	

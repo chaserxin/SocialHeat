@@ -4,20 +4,25 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.socialheat.bean.Rate;
 import com.socialheat.util.TimeUtil;
+import com.socialheat.wordsplit.WordSplit;
 
 public class DfzxBaiduDao implements DaoInterface {
 
 	private DaoHandler daoHandler;
 	
+	private long startTime;
+	
 	public DfzxBaiduDao() {
 		daoHandler = new DaoHandler();
+		try {
+			startTime = Long.parseLong(TimeUtil.date2Timestamp("2015-06-01 00:00:00"));
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
 	}
 	
 	/**
@@ -51,57 +56,76 @@ public class DfzxBaiduDao implements DaoInterface {
 
         return result;
     }
-    
-    /**
-     * 按照时间间隔获取百度评论
-     * @param span：时间间隔，以分钟为单位
-     * @return Rate
-     */
-    public List<Rate> getSentenceListByTime(int span){
-        int ms = span*60;
-        long startTime,endTime;
-        List<Rate> result = new ArrayList<Rate>();
-        // 获取数据库连接
-        Connection conn = daoHandler.getConnection();
-
-        String sql = "SELECT text, create_time FROM dfzx_query ORDER BY create_time";
-        Statement st = null;
-        try {
-            st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            ResultSet rs = st.executeQuery(sql);
-            // 获取开始时间和结束时间
-            rs.next();
-            startTime = Long.valueOf(TimeUtil.date2Timestamp(rs.getString(2)));
-            rs.last();
-            endTime = Long.valueOf(TimeUtil.date2Timestamp(rs.getString(2)));
-            // 以 span*60 为间隔,将所有百度评论分成不同组
-            rs.beforeFirst();
-            long i = startTime;
-            while (endTime-i >= ms){
-                List<String> resStr = new ArrayList<String>();
-                while (rs.next()) {
-                    if(Long.valueOf(TimeUtil.date2Timestamp(rs.getString(2))) >= i+ms) {
-                    	rs.previous();
-                        break;
-                    }
-                    resStr.add(rs.getString(1));
-                }
-                result.add(new Rate(resStr, i, i+ms));
-                i = i + ms;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (NumberFormatException e) {
-			e.printStackTrace();
-		} catch (ParseException e) {
-			e.printStackTrace();
-		} finally {
-        	daoHandler.close(conn);
-		}
-        return result;
-    }
 
 	public String getName() {
 		return "DFZX_Baidu";
+	}
+
+	public long getStartTime() {
+		return startTime;
+	}
+	
+	/**
+	 * 一天一天的获取评论
+	 */
+	public List<String> getSentenceListByStream(int span) {
+		List<String> result = new ArrayList<String>();
+
+        // 获取数据库连接
+        Connection conn = daoHandler.getConnection();
+
+        long endTime = startTime + span * 60;
+        String sql = "SELECT text FROM dfzx_query WHERE create_time > '" + TimeUtil.timestamp2Date(startTime) + "' AND create_time < '" + TimeUtil.timestamp2Date(endTime) + "' ORDER BY create_time";
+        System.out.println(sql);
+        PreparedStatement pstmt;
+        try {
+            pstmt = conn.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery();
+            System.out.println("============================");
+            while (rs.next()) {
+                result.add(rs.getString(1));
+            }
+            System.out.println("读入了"+result.size()+"条数据（百度评论）");
+            System.out.println("============================");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+        	daoHandler.close(conn);
+		}
+        
+        startTime = endTime;
+        return result;
+	}
+
+	public List<List<String>> getSplitSentenceList(WordSplit wordSplit) {
+		System.out.println("开始获取所有数据以及分词！ 开始时间为：" + TimeUtil.currentTime());
+		
+		List<List<String>> result = new ArrayList<List<String>>();
+
+        // 获取数据库连接
+        Connection conn = daoHandler.getConnection();
+
+        //  LIMIT 0, 300000
+        String sql = "SELECT text FROM dfzx_query ORDER BY create_time";
+        PreparedStatement pstmt;
+        try {
+            pstmt = conn.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery();
+            System.out.println("============================");
+            while (rs.next()) {
+            	List<String> wordList = wordSplit.splitSencence(rs.getString(1));
+		    	result.add(wordList);
+            }
+
+            System.out.println("读入了"+result.size()+"条数据（百度评论）");
+            System.out.println("============================");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+        	daoHandler.close(conn);
+		}
+
+        System.out.println("所有数据获取以及分词完成！ 结束时间为：" + TimeUtil.currentTime() + "\n");
+        return result;
 	}
 }

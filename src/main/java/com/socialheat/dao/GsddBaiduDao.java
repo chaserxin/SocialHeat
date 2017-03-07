@@ -9,17 +9,16 @@ import java.util.List;
 
 import com.socialheat.wordsplit.WordSplit;
 
-public class USeeDao implements DaoInterface {
-	
+public class GsddBaiduDao implements DaoInterface {
+
 	private DaoHandler daoHandler;
 	
-	public USeeDao(){
+	public GsddBaiduDao() {
 		daoHandler = new DaoHandler();
 	}
-
-
-    /**
-     * 得到弹幕message
+	
+	/**
+     * 得到百度评论
      * @return
      */
     public List<String> getSentenceList(){
@@ -28,8 +27,8 @@ public class USeeDao implements DaoInterface {
         // 获取数据库连接
         Connection conn = daoHandler.getConnection();
 
-        // USee
-        String sql = "SELECT messages FROM danmu WHERE topicID = '295'";
+        //  LIMIT 0, 300000
+        String sql = "SELECT text FROM gsdd_query ORDER BY create_time";
         PreparedStatement pstmt;
         try {
             pstmt = conn.prepareStatement(sql);
@@ -39,7 +38,7 @@ public class USeeDao implements DaoInterface {
                 result.add(rs.getString(1));
             }
 
-            System.out.println("读入了"+result.size()+"条数据（弹幕）");
+            System.out.println("读入了"+result.size()+"条数据（百度评论）");
             System.out.println("============================");
         } catch (SQLException e) {
             e.printStackTrace();
@@ -49,23 +48,20 @@ public class USeeDao implements DaoInterface {
 
         return result;
     }
-    
-    public String getName() {
-    	return "USee";
-    }
 
+	public String getName() {
+		return "GSDD_Baidu";
+	}
 
 	public List<String> getSentenceListByStream(int start) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-
 	public List<List<String>> getSplitSentenceList(WordSplit wordSplit) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 
 	public long getStartTime() {
 		// TODO Auto-generated method stub

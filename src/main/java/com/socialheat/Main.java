@@ -11,20 +11,45 @@ public class Main {
 
 	public static void main(String[] args) throws Exception {
 		System.out.println("统计开始！ 开始时间为：" + TimeUtil.currentTime() + "\n");
+		DataStat dataStat = new DataStat();
 		
 //		// USee
 //		DaoInterface dao = new USeeDao();
 //		WordSplit wordSplit = new WordSplitAnsj_seg();
-//		int topNum = 200;
+//		int topNum = 60;
 //		int span = 10;
 		
 		// DFZX_Baidu
 		DaoInterface dao = new DfzxBaiduDao();
 		WordSplit wordSplit = new WordSplitAnsj_seg();
-		int topNum = 100;
+		int topNum = 200;
 		int span = 60 * 24;
 		
-        DataStat.analysis(dao, wordSplit, topNum, span);
+//		// DFZX_Weibo
+//		DaoInterface dao = new DfzxWeiboDao();
+//		WordSplit wordSplit = new WordSplitAnsj_seg();
+//		int topNum = 200;
+//		int span = 10;
+		
+//		// GSDD_Weibo
+//		DaoInterface dao = new GsddBaiduDao();
+//		WordSplit wordSplit = new WordSplitAnsj_seg();
+//		int topNum = 200; 
+//		int span = 60 * 24;
+		
+//		// Pokemon_Weibo
+//		DaoInterface dao = new PokemonWeiboDao();
+//		WordSplit wordSplit = new WordSplitAnsj_seg();
+//		int topNum = 200;
+//		int span = 60 * 24;
+		
+//		// Pokemon_Weibo
+//		DaoInterface dao = new NanhaiWeiboDao();
+//		WordSplit wordSplit = new WordSplitAnsj_seg();
+//		int topNum = 200;
+//		int span = 60 * 24;
+		
+        dataStat.analysis(dao, wordSplit, topNum, span);
         
         System.out.println("统计结束！ 结束时间为：" + TimeUtil.currentTime());
 	}

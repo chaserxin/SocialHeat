@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ansj.domain.Term;
-import org.ansj.splitWord.analysis.ToAnalysis;
+import org.ansj.splitWord.analysis.IndexAnalysis;
 
 public class WordSplitAnsj_seg implements WordSplit {
+	
 	
 	public WordSplitAnsj_seg() {
 //		// 添加自定义字典 1
@@ -19,10 +20,10 @@ public class WordSplitAnsj_seg implements WordSplit {
 	}
 
     public List<String> run(List<String> sentenceList) {
-        List<String> result = new ArrayList<String>();
-
+    	List<String> result = new ArrayList<String>();
+    	
         for(String sentence : sentenceList){
-            List<Term> wordSplitResult = ToAnalysis.parse(sentence);
+            List<Term> wordSplitResult = IndexAnalysis.parse(sentence);
             for (Term term : wordSplitResult) {
                 String name = term.getName();
                 result.add(name);
@@ -31,22 +32,36 @@ public class WordSplitAnsj_seg implements WordSplit {
         return result;
     }
     
-    /*
+    /**
      * 将每个句子单独切词,每个句子的切词结果存放在一个 sentences 列表中
      * 然后将每个句子切词后得到的 sentences 存放在一个 result 列表中
      */
-	public List<List<String>> splitSencence(List<String> sentenceList) {
+	public List<List<String>> splitSencenceList(List<String> sentenceList) {
 		List<List<String>> result = new ArrayList<List<String>>();
 		 
 		for (String sentence : sentenceList) {
-				List<String> sentences = new ArrayList<String>();
-				List<Term> wordSplitResult = ToAnalysis.parse(sentence);
-				for (Term term : wordSplitResult) {
-					String name = term.getName();
-					sentences.add(name);
-				}
-				result.add(sentences);
+			List<String> sentences = new ArrayList<String>();
+			List<Term> wordSplitResult = IndexAnalysis.parse(sentence);
+			for (Term term : wordSplitResult) {
+				String name = term.getName();
+				sentences.add(name);
+			}
+			result.add(sentences);
 		}
 		return result;
 	}
+
+	/**
+	 * 单独分词一个句子
+	 */
+	public List<String> splitSencence(String sentence) {
+		List<String> result = new ArrayList<String>();
+    	
+        List<Term> wordSplitResult = IndexAnalysis.parse(sentence);
+        for (Term term : wordSplitResult) {
+            result.add(term.getName());
+        }
+        return result;
+	}
+	
 }

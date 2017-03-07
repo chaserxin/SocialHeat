@@ -1,24 +1,24 @@
 package com.socialheat.bean;
 
-import java.util.List;
+import java.util.Map;
 
 /**
- * Created by sl on 16-10-31.
  * 保存时间间隔内的热度的相关信息
  */
 public class Rate {
 
 	// 时间间隔内的热度
     private double rate;
-    // 时间间隔内的弹幕数
-    private List<String> strings;
     // 开始时间
     private long startTime;
     // 结束时间
     private long endTime;
+    // 此段时间内的所句子总数
+    private int sentenceCount;
+    // 此段时间内所有词语出现的次数统计
+    private Map<String,Integer[]> wordCountMap;
 
-    public Rate(List<String> strings, long startTime, long endTime) {
-        this.strings = strings;
+    public Rate(long startTime, long endTime) {
         this.startTime = startTime;
         this.endTime = endTime;
     }
@@ -29,14 +29,6 @@ public class Rate {
 
     public void setRate(double rate) {
         this.rate = rate;
-    }
-
-    public List<String> getStrings() {
-        return strings;
-    }
-
-    public void setStrings(List<String> strings) {
-        this.strings = strings;
     }
 
     public long getStartTime() {
@@ -54,4 +46,22 @@ public class Rate {
     public void setEndTime(long endTime) {
         this.endTime = endTime;
     }
+
+	public Map<String, Integer[]> getWordCountMap() {
+		return wordCountMap;
+	}
+
+	public void setWordCountMap(Map<String, Integer[]> wordCountMap) {
+		this.wordCountMap = wordCountMap;
+	}
+
+	public int getSentenceCount() {
+		return sentenceCount;
+	}
+
+	public void setSentenceCount(int sentenceCount) {
+		this.sentenceCount = sentenceCount;
+	}
+    
+
 }
