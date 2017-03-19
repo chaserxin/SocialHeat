@@ -1,10 +1,7 @@
 package com.socialheat.dao;
 
-import java.util.Date;
-
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
-import com.socialheat.util.TimeUtil;
 
 public class MongoDBJDBC {
 	
@@ -38,9 +35,5 @@ public class MongoDBJDBC {
 //		} finally {  
 //		    cursor.close();  
 //		}  
-		
-		Date time = new Date("15/Jul/2016:23:47:39");
-		System.out.println(TimeUtil.timestamp2Date(time.getTime()));
-
 	}
 }

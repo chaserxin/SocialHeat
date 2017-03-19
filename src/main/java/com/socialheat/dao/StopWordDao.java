@@ -8,17 +8,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class StopWordDao {
-	private DaoHandler daoHandler;
-	
 	public StopWordDao() {
-		daoHandler = new DaoHandler();
 	}
 	
 	public Set<String> getStopWord(){
 		Set<String> set = new HashSet<String>();
 		
 		 // 获取数据库连接
-        Connection conn = daoHandler.getConnection();
+        Connection conn = DaoHandler.getConnection();
         
         // StopWord
         String sql = "SELECT word FROM stopword";
@@ -36,7 +33,7 @@ public class StopWordDao {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-        	daoHandler.close(conn);
+        	DaoHandler.close(conn);
 		}
 		return set;
 	}

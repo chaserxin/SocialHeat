@@ -20,18 +20,22 @@ public class TopNWord {
 	
 	// 统计分词好的结果中每次词语出现的次数
 	private	Map<String, Word> wordMap;
-	// 保存分词好的所有句子
-	List<List<String>> splitSencenceList;
 	// 记录当前的句子数
-	private int index = 0;
+	private int index;
 	// 停用词集合
 	private Set<String> stopWordSet;
 	// 所有词语总数(含重复词语)
 	long wordSum = 0L;
 	
+	// 当前取出来所有句子数
+	// 每次都是新的
+	public int sentenceCount;
+	// 统计当前遍历取出来的所有词语出现的次数
+	// 每次都是新的
+	public Map<String,Integer[]> wordCountMap;
+	
 	public TopNWord() {
 		wordMap = new HashMap<String, Word>();
-		splitSencenceList = new ArrayList<List<String>>();
 		index = 0;
 	}
 	
@@ -43,9 +47,10 @@ public class TopNWord {
      * @return
      * @throws IOException
      */
-    public List<Word> getWordTopN(List<List<String>> new_splitSencenceList, int topNum) {
+    public List<Word> getWordTopN(List<String[]> splitSencenceList, int topNum) {
     	List<Word> topNWordList = new ArrayList<Word>();
     	
+    	sentenceCount = splitSencenceList.size();
     	if (index == 0) {
     		// 获取停用词
     		StopWordDao stopWordDao = new StopWordDao();
@@ -53,13 +58,17 @@ public class TopNWord {
     		stopWordSet.add("逾");
     		stopWordSet.add("跌");
     		stopWordSet.add("股");
+    		stopWordSet.add("🇨");
+    		stopWordSet.add("🇳");
     	}
     	
 		System.out.println("\n开始统计所有词语并去重！ 开始时间为：" + TimeUtil.currentTime());
 		// 统计所有词语总数(含重复词语)
 		
-		for (int i=0; i<new_splitSencenceList.size(); i++) {
-			List<String> words = new_splitSencenceList.get(i);
+		
+		wordCountMap = new HashMap<String, Integer[]>();
+		for (int i=0; i<splitSencenceList.size(); i++) {
+			String[] words = splitSencenceList.get(i);
 			for(String wordstring : words){
 				// 过滤掉停用词和空格
 				if (!stopWordSet.contains(wordstring) && !wordstring.equals(" ")) {
@@ -77,6 +86,25 @@ public class TopNWord {
 			        	}
 			        	wordMap.put(wordstring, word);
 			        }
+			        
+			        if (!wordCountMap.containsKey(wordstring)) {
+			        	Integer[] intArr = new Integer[3];
+			        	intArr[0] = 1;
+			        	intArr[1] = 1;
+			        	intArr[2] = i;
+			        	wordCountMap.put(wordstring, intArr);
+			        } else {
+			        	Integer[] intArr = wordCountMap.get(wordstring);
+			        	if(intArr[2] == i) {
+			        		intArr[0] ++;
+			        	} else {
+			        		intArr[0] ++;
+			        		intArr[1] ++;
+			        		intArr[2] = i;
+			        	}
+			        	wordCountMap.put(wordstring, intArr);
+			        }
+			        
 			        wordSum ++;
 				} else {
 					continue;
@@ -84,8 +112,7 @@ public class TopNWord {
 			}
 		}
 		// index 叠加
-		index += new_splitSencenceList.size();
-    	splitSencenceList.addAll(new_splitSencenceList);
+		index += splitSencenceList.size();
     	
 		System.out.println("共有：" + wordSum + "个词语（含重复词语）！");
 		System.out.println("共有：" + wordMap.size() + "个词语（无重复词语）！");
@@ -111,9 +138,6 @@ public class TopNWord {
     public List<Word> getTF_IDF_Length(Map<String, Word> wordMap) {
     	List<Word> WordList = new ArrayList<Word>();
     	
-    	// allDocCount 为所有文档总数
-        int allDocCount = splitSencenceList.size(); 
-    	
     	Iterator<Entry<String, Word>> iter = wordMap.entrySet().iterator();
     	while (iter.hasNext()) {
     		Map.Entry<String, Word> entry = iter.next();
@@ -122,11 +146,11 @@ public class TopNWord {
     		int docCount = word.sentenceList.size();
     		
     		// 计算总文档数的开方,用于保证所选择的热词出现在的文档数大于等于总文档数的开方
-    		if(docCount >= (int) Math.sqrt(splitSencenceList.size())) {
+    		if(docCount >= (int) Math.sqrt(index)) {
     			// 计算词频 TF
     		    double tf = word.getTimes() / (double)wordSum;
     		    // 计算 IDF 
-                double idf = Math.log((double)allDocCount / (double)(docCount+1));
+                double idf = Math.log((double)index / (double)(docCount+1));
                 // 计算长度的 log
                 double len = Math.log(word.getName().length()) / Math.log(2);
     		    
@@ -181,36 +205,35 @@ public class TopNWord {
         return wordListTopN;
     }
     
-    public Map<String, Integer[]> getWordInfoMap(List<List<String>> splitSencenceList) {
-    	Map<String,Integer[]> wordCountMap = new HashMap<String, Integer[]>();
-    	
-    	for (int i=0; i<splitSencenceList.size(); i++) {
-			List<String> wordList = splitSencenceList.get(i);
-    		for(String wordstring : wordList){
-				// 过滤掉停用词和空格
-				if (!stopWordSet.contains(wordstring) && !wordstring.equals(" ")) {
-			        if (!wordCountMap.containsKey(wordstring)) {
-			        	Integer[] intArr = new Integer[3];
-			        	intArr[0] = 1;
-			        	intArr[1] = 1;
-			        	intArr[2] = i;
-			        	wordCountMap.put(wordstring, intArr);
-			        } else {
-			        	Integer[] intArr = wordCountMap.get(wordstring);
-			        	if(intArr[2] == i) {
-			        		intArr[0] ++;
-			        	} else {
-			        		intArr[0] ++;
-			        		intArr[1] ++;
-			        		intArr[2] = i;
-			        	}
-			        	wordCountMap.put(wordstring, intArr);
-			        }
-				} else {
-					continue;
-				}
-			}
-		}
-    	return wordCountMap;
-    }
+//    public Map<String, Integer[]> getWordInfoMap(List<String[]> splitSencenceList) {
+//    	Map<String,Integer[]> wordCountMap = new HashMap<String, Integer[]>();
+//    	for (int i=0; i<splitSencenceList.size(); i++) {
+//    		String[] wordList = splitSencenceList.get(i);
+//    		for(String wordstring : wordList){
+//				// 过滤掉停用词和空格
+//				if (!stopWordSet.contains(wordstring) && !wordstring.equals(" ")) {
+//					if (!wordCountMap.containsKey(wordstring)) {
+//			        	Integer[] intArr = new Integer[3];
+//			        	intArr[0] = 1;
+//			        	intArr[1] = 1;
+//			        	intArr[2] = i;
+//			        	wordCountMap.put(wordstring, intArr);
+//			        } else {
+//			        	Integer[] intArr = wordCountMap.get(wordstring);
+//			        	if(intArr[2] == i) {
+//			        		intArr[0] ++;
+//			        	} else {
+//			        		intArr[0] ++;
+//			        		intArr[1] ++;
+//			        		intArr[2] = i;
+//			        	}
+//			        	wordCountMap.put(wordstring, intArr);
+//			        }
+//				} else {
+//					continue;
+//				}
+//			}
+//		}
+//    	return wordCountMap;
+//    }
 }

@@ -67,4 +67,9 @@ public class PokemonWeiboDao implements DaoInterface {
 		return 0;
 	}
 
+	public List<String[]> getSplitSentenceListByStream(int span) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

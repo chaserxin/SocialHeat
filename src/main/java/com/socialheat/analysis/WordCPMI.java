@@ -1,5 +1,7 @@
 package com.socialheat.analysis;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +40,7 @@ public class WordCPMI {
      * 主要有 sentenceCount、每个热词在出现在多少个文档中、每个热词与其他热词的 PMI
      */
 	public void initCPMI(List<Word> topNWordList, int newSentenceCount) {
-		System.out.println("初始化 CPMI 开始！ 开始时间为：" + TimeUtil.currentTime() + "\n");
+		System.out.println("初始化 CPMI 开始！ 开始时间为：" + TimeUtil.currentTime());
 		
 		sentenceCount += newSentenceCount;
     	int wordCount = topNWordList.size();
@@ -151,51 +153,83 @@ public class WordCPMI {
     public List<Word> getCPMI(List<Word> topNWordList) {
     	int wordCount = topNWordList.size();
     	
-//    	// 输出 N12
-//    	for (int i=0; i<wordCount; i++) {
-//    		System.out.print(N12[i] + " ");
-//    	}
-//    	System.out.println();
-//    	System.out.println();
-    	
-    	
-    	
     	// 得到给个词语的 CPMI 
     	// 计算公式为: log((N*(N3+1) / ((N1+1)*(N2+1)))
     	// 结果放在 result 这个 map 中
     	double[] CPMI = new double[wordCount];
     	double Max_CPMI = 0.0 - sentenceCount;
-    	for (int i=0; i<wordCount; i++) {
+    	for (int i = 0; i < wordCount; i++) {
+    		int index1 = topNWordList.get(i).getIndex();
     		CPMI[i] = 0.0;
-    		for (int j=0; j<wordCount; j++) {
-    			if (i == j) {
-    				continue;
-    			}
-    			double temp1 = 0.0;
-    			if(i < j) {
-    				temp1 = (double)sentenceCount * (double)(N3[i][j] + 1);
+			for (int j = 0; j < wordCount; j++) {
+				if(i == j){
+        			continue;
+        		}
+				int index2 = topNWordList.get(j).getIndex();
+				double temp1 = 0.0;
+    			if(index1 < index2) {
+    				temp1 = (double)sentenceCount * (double)(N3[index1][index2] + 1);
     			} else {
-    				temp1 = (double)sentenceCount * (double)(N3[j][i] + 1);
+    				temp1 = (double)sentenceCount * (double)(N3[index1][index2] + 1);
     			}
     			
-    			double temp2 = (double)(N12[i] + 1) * (double)(N12[j] + 1);
-//    			if (i == 0) {
-//    				System.out.println(sentenceCount + " * " + N3[i][j] + " / " + N12[i] + " * " + N12[j] + " = " + Math.log(temp1 / temp2 + 1) + " ");
-//    			}
+    			double temp2 = (double)(N12[index1] + 1) * (double)(N12[index2] + 1);
     			CPMI[i] += Math.log(temp1 / temp2 + 1);
-    		}
-//    		if (i == 0) {
-//    			System.out.println(CPMI[i]);
-//    		}
-    		if (CPMI[i] > Max_CPMI) {
+			}
+			if (CPMI[i] > Max_CPMI) {
 				Max_CPMI = CPMI[i];
 			}
-    	}
+		}
+    	
+    	
+//    	for (int i=0; i<topNum; i++) {
+//    		CPMI[i] = 0.0;
+//    		for (int j=0; j<topNum; j++) {
+//    			if(i == j){
+//        			continue;
+//        		}
+//    			double temp1 = 0.0;
+//    			if(i < j) {
+//    				temp1 = (double)sentenceCount * (double)(N3[i][j] + 1);
+//    			} else {
+//    				temp1 = (double)sentenceCount * (double)(N3[j][i] + 1);
+//    			}
+//    			
+//    			double temp2 = (double)(N12[i] + 1) * (double)(N12[j] + 1);
+////    			if (i == 0) {
+////    				System.out.println(sentenceCount + " * " + N3[i][j] + " / " + N12[i] + " * " + N12[j] + " = " + Math.log(temp1 / temp2 + 1) + " ");
+////    			}
+//    			CPMI[i] += Math.log(temp1 / temp2 + 1);
+//    		}
+////    		if (i == 0) {
+////    			System.out.println(CPMI[i]);
+////    		}
+//    		if (CPMI[i] > Max_CPMI) {
+//				Max_CPMI = CPMI[i];
+//			}
+//    	}
+    	
+    	
     	for (int i=0; i<wordCount; i++) {
     		double cmpi = CPMI[i] / Max_CPMI;
     		topNWordList.get(i).setCpmi(cmpi);
-//    		System.out.println(topNWordList.get(i).getName() + " : " + cmpi);
     	}
+    	
+    	
+    	// 重新排序
+    	Collections.sort(topNWordList,new Comparator<Word>(){
+            public int compare(Word a, Word b) {
+                return (int)((b.getTf_idf_length()*b.getCpmi() - a.getTf_idf_length()*a.getCpmi()) * 1000000);
+            }
+        });
+    	
+    	System.out.println();
+    	System.out.println("热词的 CMPI排序为：");
+    	System.out.println("==================================================");
+    	for (Word word : topNWordList) {
+			System.out.println(word.getName() + " --------- CMPI: " + word.getCpmi() + " --------- 总权重为: " + word.getTf_idf_length()*word.getCpmi());
+		}
+    	
 		return topNWordList;
     }
     

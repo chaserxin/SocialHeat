@@ -3,9 +3,8 @@ package com.socialheat;
 import com.socialheat.analysis.DataStat;
 import com.socialheat.dao.DaoInterface;
 import com.socialheat.dao.DfzxBaiduDao;
+import com.socialheat.dao.GsddBaiduDao;
 import com.socialheat.util.TimeUtil;
-import com.socialheat.wordsplit.WordSplit;
-import com.socialheat.wordsplit.WordSplitAnsj_seg;
 
 public class Main {
 
@@ -15,41 +14,43 @@ public class Main {
 		
 //		// USee
 //		DaoInterface dao = new USeeDao();
-//		WordSplit wordSplit = new WordSplitAnsj_seg();
 //		int topNum = 60;
 //		int span = 10;
 		
-		// DFZX_Baidu
-		DaoInterface dao = new DfzxBaiduDao();
-		WordSplit wordSplit = new WordSplitAnsj_seg();
-		int topNum = 200;
-		int span = 60 * 24;
+//		// DFZX_Baidu
+//		DaoInterface dao = new DfzxBaiduDao();
+//		int topNum = 200;
+//		int span = 60 * 24;
+//		int loopNum = 30;
 		
 //		// DFZX_Weibo
 //		DaoInterface dao = new DfzxWeiboDao();
-//		WordSplit wordSplit = new WordSplitAnsj_seg();
 //		int topNum = 200;
 //		int span = 10;
 		
-//		// GSDD_Weibo
-//		DaoInterface dao = new GsddBaiduDao();
-//		WordSplit wordSplit = new WordSplitAnsj_seg();
+		// DFZX_Baidu
+		DaoInterface dao = new GsddBaiduDao();
+		int topNum = 200;
+		int span = 60 * 24;
+		int loopNum = 28;
+		
+//		// Nanhai_Weibo
+//		DaoInterface dao = new NanhaiWeiboDao();
 //		int topNum = 200; 
 //		int span = 60 * 24;
+//		int loopNum = 9;
 		
 //		// Pokemon_Weibo
 //		DaoInterface dao = new PokemonWeiboDao();
-//		WordSplit wordSplit = new WordSplitAnsj_seg();
 //		int topNum = 200;
 //		int span = 60 * 24;
 		
 //		// Pokemon_Weibo
 //		DaoInterface dao = new NanhaiWeiboDao();
-//		WordSplit wordSplit = new WordSplitAnsj_seg();
 //		int topNum = 200;
 //		int span = 60 * 24;
 		
-        dataStat.analysis(dao, wordSplit, topNum, span);
+        dataStat.analysis(dao, topNum, span, loopNum);
         
         System.out.println("统计结束！ 结束时间为：" + TimeUtil.currentTime());
 	}

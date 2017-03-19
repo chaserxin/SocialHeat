@@ -11,10 +11,8 @@ import com.socialheat.wordsplit.WordSplit;
 
 public class USeeDao implements DaoInterface {
 	
-	private DaoHandler daoHandler;
 	
 	public USeeDao(){
-		daoHandler = new DaoHandler();
 	}
 
 
@@ -26,7 +24,7 @@ public class USeeDao implements DaoInterface {
         List<String> result = new ArrayList<String>();
 
         // 获取数据库连接
-        Connection conn = daoHandler.getConnection();
+        Connection conn = DaoHandler.getConnection();
 
         // USee
         String sql = "SELECT messages FROM danmu WHERE topicID = '295'";
@@ -44,7 +42,7 @@ public class USeeDao implements DaoInterface {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-        	daoHandler.close(conn);
+        	DaoHandler.close(conn);
 		}
 
         return result;
@@ -70,5 +68,11 @@ public class USeeDao implements DaoInterface {
 	public long getStartTime() {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+
+	public List<String[]> getSplitSentenceListByStream(int span) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -1,0 +1,100 @@
+<!doctype html>
+<head>
+    <script src="http://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <!--hcharts-->
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="http://code.highcharts.com/modules/exporting.js"></script>
+    <!--<script src="/home/sl/SocialHeat/Highcharts-5.0.2/code/highcharts.js"></script>-->
+    <meta charset="utf-8" />
+    <script>
+        $(function () {
+            $('#container').highcharts({
+
+                title: {
+                    text: '',
+                    x: -20 //
+                },
+                subtitle: {
+                    text: '',
+                    x: -20
+                },
+                xAxis: {
+                    categories: ['07-10-07-11','07-11-07-12','07-12-07-13','07-13-07-14','07-14-07-15','07-15-07-16','07-16-07-17','07-17-07-18','07-18-07-19','07-19-07-20']
+
+                },
+                yAxis: {
+                    title: {
+                        text: 'user participation degree(UPD)'
+                    },
+                    plotLines: [{
+                        value: 0,
+                        width: 1,
+                        color: '#808080'
+                    }]
+                },
+                tooltip: {
+                    valueSuffix: ''
+                },
+                legend: {
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'middle',
+                    borderWidth: 0
+                },
+                series: [
+                    {
+                        name: 'day1',
+                        data: [3807.531111050405]
+                    
+                    },{
+                        name: 'day2',
+                        data: [4252.802960737583,15750.680875824726]
+
+                    },{
+                        name: 'day3',
+                        data: [5685.887710772728,21884.365826371843,685924.7602660892]
+
+                    },{
+                        name: 'day4',
+                        data: [5432.370681665272,21189.574192256958,654804.0241952199,338079.93086067145]
+
+                    },{
+                        name: 'day5',
+                        data: [5475.385244048087,21910.722916634622,636785.6863519694,326126.47689099034,84241.84504081405]
+
+                    },{
+                        name: 'day6',
+                        data: [5380.817227223358,21689.329639805946,626380.3870885966,321225.4912467907,82459.83493259469,53707.972109025206]
+
+                    },{
+                        name: 'day7',
+                        data: [5494.22864958011,22069.255144694493,641146.6998218428,328690.2991718954,84169.4214335718,54848.234378062676,33182.68150483654]
+
+                    },{
+                        name: 'day8',
+                        data: [5443.2746662688805,21896.234173799498,634780.8586354158,325078.1969021232,83331.57417286104,54188.55231250615,32477.261925046227,24467.130489053212]
+
+                    },{
+                        name: 'day9',
+                        data: [5475.309908597277,21960.72195112471,638791.9742047321,327095.8182226006,83773.49909827579,54483.44213359014,32631.952985740776,24559.71616599028,20028.358534540184]
+
+                    }],
+
+                credits: {
+                    enabled:false     //不显示LOGO
+                },
+                exporting: {
+                    enabled:1
+                }
+            });
+        });
+
+
+    </script></head>
+
+<body>
+<div id="container" style="min-width:700px;height:400px">
+
+</div>
+</body>
+</html>

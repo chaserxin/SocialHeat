@@ -11,10 +11,7 @@ import com.socialheat.wordsplit.WordSplit;
 
 public class DfzxWeiboDao implements DaoInterface {
 
-	private DaoHandler daoHandler;
-	
 	public DfzxWeiboDao() {
-		daoHandler = new DaoHandler();
 	}
 	
 	/**
@@ -24,7 +21,7 @@ public class DfzxWeiboDao implements DaoInterface {
 		List<String> result = new ArrayList<String>();
 
         // 获取数据库连接
-        Connection conn = daoHandler.getConnection();
+        Connection conn = DaoHandler.getConnection();
 
         String sql = "SELECT text FROM dfzx_weibo ORDER BY create_time";
         PreparedStatement pstmt;
@@ -41,7 +38,7 @@ public class DfzxWeiboDao implements DaoInterface {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-        	daoHandler.close(conn);
+        	DaoHandler.close(conn);
 		}
         return result;
 	}
@@ -63,6 +60,11 @@ public class DfzxWeiboDao implements DaoInterface {
 	public long getStartTime() {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	public List<String[]> getSplitSentenceListByStream(int span) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

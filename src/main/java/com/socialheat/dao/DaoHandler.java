@@ -12,8 +12,8 @@ public class DaoHandler {
     //驱动信息
     private static final String DRIVER = "com.mysql.jdbc.Driver";
     //数据库地址
-    private static final String URL = "jdbc:mysql://localhost:3306/socialheat";
-    private Connection connection;
+    private static final String URL = "jdbc:mysql://localhost:3306/socialheat?rewriteBatchedStatements=true";
+    private static Connection connection;
   
     public DaoHandler() {
         try{
@@ -23,7 +23,7 @@ public class DaoHandler {
         }
     }
     
-    public Connection getConnection(){
+    public static Connection getConnection(){
         try {
             connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
         } catch (SQLException e) {
@@ -32,11 +32,13 @@ public class DaoHandler {
         return connection;
     }
     
-	public void close(Connection connection) {
-		try {
-			connection.close();
-		} catch (SQLException e) {
-			System.out.println("关闭连接失败...");
+	public static void close(Connection connection) {
+		if (connection != null){
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				System.out.println("关闭连接失败...");
+			}
 		}
 	}
 }
