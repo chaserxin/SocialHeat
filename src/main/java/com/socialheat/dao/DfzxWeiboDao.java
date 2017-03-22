@@ -7,64 +7,61 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.socialheat.wordsplit.WordSplit;
+import com.socialheat.util.TimeUtil;
 
 public class DfzxWeiboDao implements DaoInterface {
-
-	public DfzxWeiboDao() {
-	}
+	private long startTime;
 	
-	/**
-	 * 得到微博的评论
-	 */
-	public List<String> getSentenceList() {
-		List<String> result = new ArrayList<String>();
-
-        // 获取数据库连接
-        Connection conn = DaoHandler.getConnection();
-
-        String sql = "SELECT text FROM dfzx_weibo ORDER BY create_time";
-        PreparedStatement pstmt;
-        try {
-            pstmt = conn.prepareStatement(sql);
-            ResultSet rs = pstmt.executeQuery();
-            System.out.println("============================");
-            while (rs.next()) {
-                result.add(rs.getString(1));
-            }
-
-            System.out.println("读入了"+result.size()+"条数据（微博评论）");
-            System.out.println("============================");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-        	DaoHandler.close(conn);
+	public DfzxWeiboDao() {
+		try {
+			startTime = Long.parseLong(TimeUtil.date2Timestamp("2015-06-01 00:00:00"));
+		} catch (Exception e1) {
+			e1.printStackTrace();
 		}
-        return result;
+	}
+
+	public List<String> getSentenceList() {
+		return null;
 	}
 
 	public String getName() {
 		return "DFZX_Weibo";
 	}
-
-	public List<String> getSentenceListByStream(int start) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public List<List<String>> getSplitSentenceList(WordSplit wordSplit) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	public long getStartTime() {
-		// TODO Auto-generated method stub
-		return 0;
+		return startTime;
+	}
+	
+	public List<String> getSentenceListByStream(int start) {
+		return null;
 	}
 
 	public List<String[]> getSplitSentenceListByStream(int span) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		List<String[]> result = new ArrayList<String[]>();
 
+		// 获取数据库连接
+		Connection conn = DaoHandler.getConnection();
+		long endTime = startTime + span * 60;
+		String sql = "SELECT word FROM sw_dfzx_weibo WHERE create_time BETWEEN " + startTime + " and " + endTime;
+		System.out.println(sql);
+		PreparedStatement pstmt;
+		try {
+			pstmt = conn.prepareStatement(sql);
+			ResultSet rs = pstmt.executeQuery();
+			System.out.println("============================");
+			while (rs.next()) {
+				result.add(rs.getString(1).split(","));
+			}
+			System.out.println("读入了" + result.size() + "条数据（百度评论）");
+			System.out.println("============================");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DaoHandler.close(conn);
+		}
+
+		startTime = endTime;
+		return result;
+	}
+	
 }

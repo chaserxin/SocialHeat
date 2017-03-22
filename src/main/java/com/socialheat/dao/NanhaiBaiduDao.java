@@ -9,11 +9,12 @@ import java.util.List;
 
 import com.socialheat.util.TimeUtil;
 
-public class NanhaiWeiboDao implements DaoInterface {
+public class NanhaiBaiduDao implements DaoInterface {
 
+	private String name = "nanhai_baidu";
 	private long startTime;
 	
-	public NanhaiWeiboDao() {
+	public NanhaiBaiduDao() {
 		try {
 			startTime = Long.parseLong(TimeUtil.date2Timestamp("2016-7-10 00:00:00"));
 		} catch (Exception e1) {
@@ -26,33 +27,7 @@ public class NanhaiWeiboDao implements DaoInterface {
 	} 
 
 	public List<String> getSentenceListByStream(int span) {
-		List<String> result = new ArrayList<String>();
-
-        // 获取数据库连接
-        Connection conn = DaoHandler.getConnection();
-
-        long endTime = startTime + span * 60;
-        
-        String sql = "SELECT text FROM nanhai_weibo WHERE create_time BETWEEN " + startTime + " and " + endTime;
-        System.out.println(sql);
-        PreparedStatement pstmt;
-        try {
-            pstmt = conn.prepareStatement(sql);
-            ResultSet rs = pstmt.executeQuery();
-            System.out.println("============================");
-            while (rs.next()) {
-                result.add(rs.getString(1));
-            }
-            System.out.println("读入了"+result.size()+"条数据（微博评论）");
-            System.out.println("============================");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-        	DaoHandler.close(conn);
-		}
-        
-        startTime = endTime;
-        return result;
+		return null;
 	}
 
 	public List<String[]> getSplitSentenceListByStream(int span) {
@@ -61,7 +36,7 @@ public class NanhaiWeiboDao implements DaoInterface {
 		 // 获取数据库连接
         Connection conn = DaoHandler.getConnection();
 		long endTime = startTime + span * 60;
-        String sql = "SELECT word FROM sw_nanhai_weibo WHERE create_time BETWEEN " + startTime + " and " + endTime;
+        String sql = "SELECT word FROM sw_" + name + " WHERE create_time BETWEEN " + startTime + " and " + endTime;
         System.out.println(sql);
         PreparedStatement pstmt;
         try {
@@ -71,7 +46,7 @@ public class NanhaiWeiboDao implements DaoInterface {
             while (rs.next()) {
                 result.add(rs.getString(1).split(","));
             }
-            System.out.println("读入了"+result.size()+"条数据（微博评论）");
+            System.out.println("读入了"+result.size()+"条数据");
             System.out.println("============================");
         } catch (SQLException e) {
             e.printStackTrace();
@@ -84,7 +59,7 @@ public class NanhaiWeiboDao implements DaoInterface {
 	}
 
 	public String getName() {
-		return "nanhai_weibo";
+		return name;
 	}
 
 	public long getStartTime() {

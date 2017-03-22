@@ -93,9 +93,6 @@ public class EventPopularity {
                     sentenceNum_contain++;
             }
 
-//            System.out.println("sentenceNum_contain = "+sentenceNum_contain);
-//            System.out.println("wordNum = "+wordNum);
-
             if(sentenceNum_contain==0 || wordNum==0){
                 rate += 0;
             }else{

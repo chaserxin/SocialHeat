@@ -1,8 +1,7 @@
-package com.socialheat.dao;
+package com.socialheat.util;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,13 +10,15 @@ import org.bson.Document;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.socialheat.dao.DaoHandler;
+import com.socialheat.dao.DaoMongoDBJDBC;
 
 public class MongoDB2Mysql {
 
-	private MongoDBJDBC mongoDBJDBC;
+	private DaoMongoDBJDBC mongoDBJDBC;
 	
 	public MongoDB2Mysql() {
-		mongoDBJDBC = new MongoDBJDBC();
+		mongoDBJDBC = new DaoMongoDBJDBC();
 	}
 	
 	public static void main(String[] args) throws Exception {
@@ -27,7 +28,7 @@ public class MongoDB2Mysql {
 		
         // 获取数据库连接
 		MongoDatabase mongoDatabase = test.mongoDBJDBC.getConnection();
-		MongoCollection<Document> collection = mongoDatabase.getCollection("dfzx_baidu");
+		MongoCollection<Document> collection = mongoDatabase.getCollection("nanhai_baidu");
 		MongoCursor<Document> cursor = collection.find().iterator();  
 		long i = 0;
 		try {  
@@ -55,7 +56,7 @@ public class MongoDB2Mysql {
 		
 		long j = 0;
         try { 
-        	String sql = "insert into dfzx_baidu(text,create_time) values(?,?)";
+        	String sql = "insert into nanhai_baidu(text,create_time) values(?,?)";
         	pstmt = conn.prepareStatement(sql);
         	//优化插入第一步       设置手动提交  
             conn.setAutoCommit(false); 
@@ -63,7 +64,7 @@ public class MongoDB2Mysql {
         	for (List<String> list : dbList) {
         		j ++;
     	        pstmt.setString(1, list.get(0));
-    	        pstmt.setString(2, list.get(1));
+    	        pstmt.setLong(2, Long.parseLong(list.get(1)));
     	        
     	        //优化插入第二步       插入代码打包，等一定量后再一起插入。
     	        pstmt.addBatch(); 
@@ -78,8 +79,6 @@ public class MongoDB2Mysql {
                     pstmt.clearBatch();        
                 }
     		}
-        } catch (SQLException e) {
-			 e.printStackTrace();
         } finally {  
 		     DaoHandler.close(conn);
 		}  
@@ -89,6 +88,23 @@ public class MongoDB2Mysql {
         System.out.println("============================");
         
         return ;
+	}
+	
+	
+	/**
+	 * 20150713082912 到 2015-07-13 08:29:12
+	 */
+	public static long timeCast(String time) {
+		String timeString = time.substring(0,4)+"-"+time.substring(4,6)+"-"+time.substring(6,8)+" "+time.substring(8,10)+":"+time.substring(10,12)+":"+time.substring(12);
+		long long_time = 0L;
+		try {
+			long_time = Long.parseLong(TimeUtil.date2Timestamp(timeString));
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return long_time;
 	}
 
 }

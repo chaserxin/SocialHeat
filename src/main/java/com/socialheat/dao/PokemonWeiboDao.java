@@ -12,10 +12,10 @@ import com.socialheat.wordsplit.WordSplit;
 
 public class PokemonWeiboDao implements DaoInterface {
 
-	private MongoDBJDBC mongoDBJDBC;
+	private DaoMongoDBJDBC mongoDBJDBC;
 	
 	public PokemonWeiboDao() {
-		mongoDBJDBC = new MongoDBJDBC();
+		mongoDBJDBC = new DaoMongoDBJDBC();
 	}
 	
 	/**

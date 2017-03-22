@@ -3,7 +3,7 @@ package com.socialheat.dao;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 
-public class MongoDBJDBC {
+public class DaoMongoDBJDBC {
 	
 	MongoClient mongoClient = null;
 	

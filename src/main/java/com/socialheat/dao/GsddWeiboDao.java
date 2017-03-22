@@ -9,11 +9,11 @@ import java.util.List;
 
 import com.socialheat.util.TimeUtil;
 
-public class GsddBaiduDao implements DaoInterface {
+public class GsddWeiboDao implements DaoInterface {
 
 	private long startTime;
 
-	public GsddBaiduDao() {
+	public GsddWeiboDao() {
 		try {
 			startTime = Long.parseLong(TimeUtil.date2Timestamp("2015-6-16 00:00:00"));
 		} catch (Exception e1) {
@@ -21,11 +21,6 @@ public class GsddBaiduDao implements DaoInterface {
 		}
 	}
 
-	/**
-	 * 得到百度评论
-	 * 
-	 * @return
-	 */
 	public List<String> getSentenceList() {
 		return null;
 	}
@@ -40,7 +35,7 @@ public class GsddBaiduDao implements DaoInterface {
 		// 获取数据库连接
 		Connection conn = DaoHandler.getConnection();
 		long endTime = startTime + span * 60;
-		String sql = "SELECT word FROM sw_gsdd_baidu WHERE create_time BETWEEN " + startTime + " and " + endTime;
+		String sql = "SELECT word FROM sw_gsdd_weibo WHERE create_time BETWEEN " + startTime + " and " + endTime;
 		System.out.println(sql);
 		PreparedStatement pstmt;
 		try {
@@ -50,7 +45,7 @@ public class GsddBaiduDao implements DaoInterface {
 			while (rs.next()) {
 				result.add(rs.getString(1).split(","));
 			}
-			System.out.println("读入了" + result.size() + "条数据（百度评论）");
+			System.out.println("读入了" + result.size() + "条数据");
 			System.out.println("============================");
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -67,7 +62,7 @@ public class GsddBaiduDao implements DaoInterface {
 	}
 
 	public String getName() {
-		return "GSDD_Baidu";
+		return "GSDD_Weibo";
 	}
 
 }
