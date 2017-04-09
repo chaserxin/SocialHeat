@@ -21,8 +21,10 @@ public class Word {
     
     // TF 乘以 IDF 的结果
     private double tf_idf;
-    // TF 乘以 IDF 乘以 Length 的最终结果
+    // TF 乘以 IDF 乘以 log(Len) 的最终结果
     private double tf_idf_length;
+    // TF 乘以 IDF 乘以 log(Len) 乘以 cpmi 的最终结果
+    private double weight;
     // 记录该热词的排名,从0开始
     private int index;
     
@@ -103,6 +105,14 @@ public class Word {
 
 	public void setIndex(int index) {
 		this.index = index;
+	}
+
+	public double getWeight() {
+		return weight;
+	}
+
+	public void setWeight(double weight) {
+		this.weight = weight;
 	}
     
 	

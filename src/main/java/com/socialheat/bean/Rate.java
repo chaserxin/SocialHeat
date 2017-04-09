@@ -13,8 +13,10 @@ public class Rate {
     private long startTime;
     // 结束时间
     private long endTime;
-    // 此段时间内的所句子总数
+    // 此段时间内的所有句子总数
     private int sentenceCount;
+    // 此段时间内的所有词语总数
+    private int wordCount;
     // 此段时间内所有词语出现的次数统计
     private Map<String,Integer[]> wordCountMap;
 
@@ -61,6 +63,14 @@ public class Rate {
 
 	public void setSentenceCount(int sentenceCount) {
 		this.sentenceCount = sentenceCount;
+	}
+
+	public int getWordCount() {
+		return wordCount;
+	}
+
+	public void setWordCount(int wordCount) {
+		this.wordCount = wordCount;
 	}
     
 

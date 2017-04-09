@@ -2,7 +2,7 @@ package com.socialheat;
 
 import com.socialheat.analysis.DataStat;
 import com.socialheat.dao.DaoInterface;
-import com.socialheat.dao.NanhaiWeiboDao;
+import com.socialheat.dao.GsddBaiduDao;
 import com.socialheat.util.TimeUtil;
 
 public class Main {
@@ -20,14 +20,14 @@ public class Main {
 //		// DFZX_Weibo
 //		DaoInterface dao = new DfzxWeiboDao();
 //		int topNum = 200;
-//		int span = 60;
-//		int loopNum = 30 * 24;
+//		int span = 60 * 24;
+//		int loopNum = 30;
 		
-//		// GSDD_Baidu
-//		DaoInterface dao = new GsddBaiduDao();
-//		int topNum = 200;
-//		int span = 60;
-//		int loopNum = 28 * 24;
+		// GSDD_Baidu
+		DaoInterface dao = new GsddBaiduDao();
+		int topNum = 200;
+		int span = 60;
+		int loopNum = 28 * 24;
 		
 //		// GSDD_Weibo
 //		DaoInterface dao = new GsddWeiboDao();
@@ -41,11 +41,11 @@ public class Main {
 //		int span = 60;
 //		int loopNum = 9 * 24;
 		
-		// Nanhai_Weibo
-		DaoInterface dao = new NanhaiWeiboDao();
-		int topNum = 200; 
-		int span = 60;
-		int loopNum = 9 * 24;
+//		// Nanhai_Weibo
+//		DaoInterface dao = new NanhaiWeiboDao();
+//		int topNum = 200; 
+//		int span = 60;
+//		int loopNum = 9 * 24;
 		
 //		// Pokemon_Weibo
 //		DaoInterface dao = new PokemonWeiboDao();

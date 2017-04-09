@@ -24,13 +24,13 @@ public class SaveFileUtil {
         FileOutputStream out=new FileOutputStream(file,true);
 
         StringBuffer sb1=new StringBuffer();
-        sb1.append("序号    词语          加入长度"+"\n");
+        sb1.append("序号    词语         权重"+"\n");
         out.write(sb1.toString().getBytes("utf-8"));
 
         int cnt_out=1;
         for (Word word : results) {
             StringBuffer sb=new StringBuffer();
-            sb.append(cnt_out+"  "+word.getName()+"  "+word.getTf_idf_length()+"\n");
+            sb.append(cnt_out+"  "+word.getName()+"  "+word.getTf_idf_length()*word.getCpmi()+"\n");
             out.write(sb.toString().getBytes("utf-8"));
             cnt_out++;
         }
