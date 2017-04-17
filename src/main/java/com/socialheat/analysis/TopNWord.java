@@ -33,7 +33,6 @@ public class TopNWord {
 	@SuppressWarnings("unused")
 	private double totalCPMI;
 	// topN热词的 weight 总和
-	@SuppressWarnings("unused")
 	private double totalWeight;
 	
 	// 当前取出来所有句子数
@@ -74,6 +73,7 @@ public class TopNWord {
     		stopWordSet.add("股");
     		stopWordSet.add("🇨");
     		stopWordSet.add("🇳");
+    		stopWordSet.add("388");
     	}
     	
     	// 统计所有词语总数(含重复词语)
@@ -109,29 +109,29 @@ public class TopNWord {
      * @param topNWordList
      * @return
      */
-    public List<Word> getWeightTopNWord(List<Word> topNWordList, int weightPercentage) {
+    public List<Word> getWeightTopNWord(List<Word> topNWordList, double weightPercentage) {
     	List<Word> tempList = new ArrayList<Word>();
+    	double tempTotalWeight = 0.0;
 		for (Word word : topNWordList) {
-			if(word.getWeight() >= topNWordList.get(0).getWeight() * weightPercentage / 100) {
+			if(tempTotalWeight < totalWeight * weightPercentage) {
+				tempTotalWeight += word.getWeight();
 				tempList.add(word);
 			}
 		}
-    	// 得到前 topNum 的热词的 CPMI
-     	topNWordList = wordCPMI.getCPMI(tempList);
-     	// 重新排序
-    	Collections.sort(tempList,new Comparator<Word>(){
-            public int compare(Word a, Word b) {
-                return (int)((b.getTf_idf_length()*b.getCpmi() - a.getTf_idf_length()*a.getCpmi()) * 1000000);
-            }
-        });
+//    	// 得到前 topNum 的热词的 CPMI
+//     	topNWordList = wordCPMI.getCPMI(tempList);
+//     	// 重新排序
+//    	Collections.sort(tempList,new Comparator<Word>(){
+//            public int compare(Word a, Word b) {
+//                return (int)((b.getTf_idf_length()*b.getCpmi() - a.getTf_idf_length()*a.getCpmi()) * 1000000);
+//            }
+//        });
     	
     	System.out.println();
-    	
-    	System.out.println("\n选取权重大于等于总权重的百分之 " + weightPercentage + " 的热词，总共有：" + tempList.size() + " 个热词！");
+    	System.out.println("\n选取权重大于等于总权重的百分之 " + weightPercentage + " 的热词，总共有：" + tempList.size() + " 个热词！" + " 总权重为：" + totalWeight + " 计算后：" + totalWeight * weightPercentage);
     	System.out.println("热词排序为：");
     	System.out.println("===========================================================================");
     	for (Word word : tempList) {
-    		word.setWeight(word.getTf_idf_length() * word.getCpmi());
 			System.out.println(word.getName() + " --------- CMPI: " + word.getCpmi() + " --------- 权重为: " + word.getWeight());
 		}
     	System.out.println("===========================================================================");
@@ -155,6 +155,9 @@ public class TopNWord {
 	}
     
 	
+	
+	
+	
 	/**
 	 * 得到 CPMI 和权重 
 	 * @param topNWordList
@@ -172,16 +175,12 @@ public class TopNWord {
     	
     	totalCPMI = 0.0;
     	totalWeight = 0.0;
-    	double min = 0.0;
     	for (Word word : topNWordList) {
     		word.setWeight(word.getTf_idf_length() * word.getCpmi());
     		System.out.println(word.getName() + " --------- 出现次数: " + word.getTimes() + " --------- TF-IDF-Len: " + word.getTf_idf_length() + " --------- CMPI: " + word.getCpmi() + " --------- 权重为: " + word.getWeight());
 			totalCPMI += word.getCpmi();
 			totalWeight += word.getWeight();
-			min = word.getWeight();
 		}
-    	if(topNWordList.size() > 0)
-    		System.out.println(topNWordList.get(0).getWeight() + " / " + min + " = " + topNWordList.get(0).getWeight() / min);
     	return topNWordList;
 	}
 	

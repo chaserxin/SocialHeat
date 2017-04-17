@@ -3,6 +3,7 @@ package com.socialheat.util;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.bson.Document;
@@ -28,7 +29,7 @@ public class MongoDB2Mysql {
 		
         // 获取数据库连接
 		MongoDatabase mongoDatabase = test.mongoDBJDBC.getConnection();
-		MongoCollection<Document> collection = mongoDatabase.getCollection("nanhai_baidu");
+		MongoCollection<Document> collection = mongoDatabase.getCollection("tuoou_weibo");
 		MongoCursor<Document> cursor = collection.find().iterator();  
 		long i = 0;
 		try {  
@@ -56,7 +57,7 @@ public class MongoDB2Mysql {
 		
 		long j = 0;
         try { 
-        	String sql = "insert into nanhai_baidu(text,create_time) values(?,?)";
+        	String sql = "insert into tuoou_weibo(text,create_time) values(?,?)";
         	pstmt = conn.prepareStatement(sql);
         	//优化插入第一步       设置手动提交  
             conn.setAutoCommit(false); 
@@ -64,7 +65,10 @@ public class MongoDB2Mysql {
         	for (List<String> list : dbList) {
         		j ++;
     	        pstmt.setString(1, list.get(0));
-    	        pstmt.setLong(2, Long.parseLong(list.get(1)));
+    	        
+//    	        pstmt.setLong(2, Long.parseLong(list.get(1)));
+//    	        pstmt.setLong(2, timeCast1(list.get(1)));
+    	        pstmt.setLong(2, Long.parseLong(TimeUtil.date2Timestamp(list.get(1))));
     	        
     	        //优化插入第二步       插入代码打包，等一定量后再一起插入。
     	        pstmt.addBatch(); 
@@ -104,6 +108,18 @@ public class MongoDB2Mysql {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return long_time;
+	}
+	
+	/**
+	 * 25/Feb/2016:12:53:33 到 2015-07-13 08:29:12
+	 */
+	@SuppressWarnings("deprecation")
+	public static long timeCast1(String time) {
+		String[] sp = time.split("/|:");
+		String timeString = sp[1]+" "+sp[0]+", "+sp[2]+" "+sp[3]+":"+sp[4]+":"+sp[5];
+		Date date = new Date(timeString);
+		long long_time = date.getTime() / 1000;
 		return long_time;
 	}
 

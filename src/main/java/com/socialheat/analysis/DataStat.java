@@ -6,9 +6,8 @@ import java.util.List;
 
 import com.socialheat.bean.Rate;
 import com.socialheat.bean.Word;
-import com.socialheat.dao.DaoInterface;
+import com.socialheat.dao.ProjectDao;
 import com.socialheat.util.SaveFileUtil;
-import com.socialheat.util.TimeUtil;
 
 
 public class DataStat {
@@ -20,9 +19,10 @@ public class DataStat {
 	 * @param span			分析的时间间隔
 	 * @throws IOException
 	 */
-    public void analysis(DaoInterface dao, int topNum, int span, int loopNum) throws IOException {
+    public void analysis(ProjectDao dao, int topNum, int span) throws IOException {
         TopNWord topNWord = new TopNWord(topNum);
         List<Rate> rateList = new ArrayList<Rate>();
+        int loopNum = dao.getLoopNum(span);
         
         for (int i=1; i<=loopNum; i++) {
         	System.out.println("****************************************************************************************");
@@ -42,21 +42,76 @@ public class DataStat {
 		    tempRate.setWordCount(topNWord.getNewWordCount());
 		    rateList.add(tempRate);
 		    
-		    System.out.println("开始Rate循环！ 开始时间为：" + TimeUtil.currentTime());
-		    // 此循环为筛选
-		    for (int weightPercentage=1; weightPercentage<=10; weightPercentage=weightPercentage+3) {
-		        List<Word> tempTopNWordList = new ArrayList<Word>();
-		        tempTopNWordList = topNWord.getWeightTopNWord(topNWordList, weightPercentage);
-		        
-		     	for(Rate rate : rateList){
-		     		EventPopularity eventPopularity = new EventPopularity();
-		            rate.setRate(eventPopularity.getRate(tempTopNWordList, rate.getWordCountMap(), rate.getSentenceCount(), rate.getWordCount()));
-		        }
-	     		SaveFileUtil.writeWord("E:/SocialHeatPaper/SocialHeat/result/" + dao.getName() + "_Top_Word.txt", tempTopNWordList);
-		     	SaveFileUtil.writeRate("E:/SocialHeatPaper/SocialHeat/result/" + dao.getName() + "_Top_Rate.txt", rateList);
+		    // 此循环为删词循环
+		    // 存热词增加的速率 = 此次循环的热词数 / 上次循环的热次数
+		    List<Double> wordAddRateList = new ArrayList<Double>();
+		    // 保存总速率
+		    double totalWordAddRate = 0.0;
+		    // 保存平均速率
+		    double averageWordAddRate = 0.0;
+		    // 保存上次迭代的热词数
+		    int lastWordNum = -1;
+		    // 保存第一次迭代热词数超过20迭代次数
+		    int firstTimes = 1;
+		    // 保存最优的迭代次数
+		    int bestTimes = 0;
+		    // 本次迭代计算每次循环新加热词的速率
+		    for (double weightPercentage=0.1; weightPercentage<=1; weightPercentage=weightPercentage+0.1) {
+		         List<Word> tempTopNWordList = topNWord.getWeightTopNWord(topNWordList, weightPercentage);
+		         if(lastWordNum != -1) {
+	        		 double tempWordAddRate = tempTopNWordList.size() / (double)lastWordNum;
+	        		 wordAddRateList.add(tempWordAddRate);
+	        		 totalWordAddRate += tempWordAddRate;
+		         }
+	        	 lastWordNum = tempTopNWordList.size();
+	        	 if(lastWordNum < 20) {
+	        		 firstTimes ++;
+	        	 }
 		    }
-		    System.out.println("Rate循环结束！ 结束时间为：" + TimeUtil.currentTime());
+		    averageWordAddRate = totalWordAddRate / wordAddRateList.size();
+		    
+		    
+		    
+		    
+		    for (int j = 0; j < wordAddRateList.size(); j++) {
+				System.out.print(wordAddRateList.get(j) + "---");
+			}
+		    System.out.print(averageWordAddRate);
 		    System.out.println();
+		    
+		    
+		    
+		    
+		    
+		    // 本次迭代找出最优的一次迭代,规则为
+		    // 1.热词总数大于20
+		    // 2.在条件1满足的情况下,连续两次循环所加热词的速率大于平均速率
+		    int aboveTimes = 0;
+		    for (int j = 0; j < wordAddRateList.size(); j++) {
+				if(wordAddRateList.get(j) > averageWordAddRate){
+					aboveTimes ++;
+				} else {
+					aboveTimes = 0;
+				}
+				if(aboveTimes >= 2 && j >= firstTimes-1) {
+					bestTimes = j + 1;
+					break;
+				}
+			}
+		    if(bestTimes == 0) {
+		    	bestTimes = 10;
+		    }
+		    // 得到最优的一次迭代的热词
+		    List<Word> tempTopNWordList = topNWord.getWeightTopNWord(topNWordList, bestTimes*0.1);
+		    
+		    
+		    // 此循环为计算热度循环
+		    for(Rate rate : rateList){
+	     		EventPopularity eventPopularity = new EventPopularity();
+	            rate.setRate(eventPopularity.getRate(tempTopNWordList, rate.getWordCountMap(), rate.getSentenceCount(), rate.getWordCount()));
+	        }
+     		SaveFileUtil.writeWord("E:/SocialHeatPaper/SocialHeat/result/" + dao.getName() + "_Top_Word.txt", tempTopNWordList);
+	     	SaveFileUtil.writeRate("E:/SocialHeatPaper/SocialHeat/result/" + dao.getName() + "_Top_Rate.txt", rateList);
 	    }
         
        return ;
