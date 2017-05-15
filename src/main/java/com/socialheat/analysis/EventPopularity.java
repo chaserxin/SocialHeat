@@ -23,15 +23,15 @@ public class EventPopularity {
 	 */
 	public double getRate(List<Word> topNWordList, Map<String,Integer[]> wordCountMap, int sentenceCount, int wordCount) {
  		
-// 		// 此段时间内所有热词出现的总次数
-// 		int hotWord_contain = 0;
-// 		for (Word word : topNWordList){
-// 			if (wordCountMap.containsKey(word.getName())) {
-// 				hotWord_contain = hotWord_contain + wordCountMap.get(word.getName())[0];
-//            } else {
-//            	continue;
-//            }
-// 		}
+ 		// 此段时间内所有热词出现的总次数
+ 		int hotWord_contain = 0;
+ 		for (Word word : topNWordList){
+ 			if (wordCountMap.containsKey(word.getName())) {
+ 				hotWord_contain = hotWord_contain + wordCountMap.get(word.getName())[0];
+            } else {
+            	continue;
+            }
+ 		}
  		
  		// 此段时间内的事件热度
  		double eventPopularity = 0;
@@ -60,8 +60,8 @@ public class EventPopularity {
             	double idf = Math.log(sentenceCount / (double)sentenceCount_contain);
             	double len = Math.log(word.getName().length()) / Math.log(2);
             	
-//            	double tf = (double)wordNums / (double)hotWord_contain;
-            	double tf = (double)wordNums / (double)wordCount;
+            	double tf = (double)wordNums / (double)hotWord_contain;
+//            	double tf = (double)wordNums / (double)wordCount;
             	
             	// double p_wi = tf * idf * len * word.getCpmi();
             	// eventPopularity += wordNums * p_wi;
